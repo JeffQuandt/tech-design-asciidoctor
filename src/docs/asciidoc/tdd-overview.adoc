@@ -1,0 +1,162 @@
+= Test Driven Development in Legacy Code
+Jeff Quandt<jeff.quandt@mutualofomaha.com>
+2/12/2017
+:revnumber: 1.0.0
+:icons: font
+:imagesdir: images
+:asset-uri-scheme: http
+:source-highlighter: highlightjs
+:source-language: java
+:navigation:
+:menu:
+:goto:
+
+== Introduction: What is TDD?
+
+[quote, Wikipedia, Test Driven Development]
+Test-driven development (TDD) is a software development process that relies on the repetition of a very short development cycle: requirements are turned into very specific test cases, then the software is improved to pass the new tests, only.
+
+[%step]
+But what does that mean in practise?
+
+== TDD Methodology
+
+Robert Martin describes the following three rules for TDD.
+
+. You must write a failing test before you write any production code.
+. You must not write more of a test than is sufficient to fail, or fail to compile.
+. You must not write more production code than is sufficient to make the currently failing test pass.
+
+Also called the Red -> Green -> Refactor cycle.
+
+Test suites must be fast and run often.
+
+== Test First or Test Later?
+
+In practice, it doesn't matter if the test is written first or later. The important part is the short feedback loop.
+
+Running the tests frequently and close to when you make changes, helps you identify bugs/mistakes sooner.
+
+== TDD Kata
+
+String Calculator Demo
+
+== Legacy Change Algorithm
+
+. Identify change points
+. Find test points
+. Break dependencies
+. Write tests
+. Make changes and refactor
+
+== Seams
+
+
+== Strategy for Analyzing
+
+Effect Propagation Method
+
+. Identify a method that will change
+. Examine return values and where they are used
+. Examine changes in class fields
+.. Investigate super- and subclasses
+. Examine side effects on method parameters
+.. Investigate where method parameters may be accessed by callers
+. Examine modifications in static/global data
+
+== More than finding bugs!
+
+[quote, Michael Feathers, Working Effectively with Legacy Code]
+."Method Use" Rule
+Before you use a method, check to see if there are tests. If there aren't, write them.
+
+Tests aren't just to find bugs. Tests also document how code behaves. When working in a legacy environment without test cases, an effective method
+for analyzing code is to write characterization tests. This type of test is meant to find out what the existing code does, so that you can use or modify it.
+
+Over time, this increases overall test coverage, helps you understand what the method you're calling does, and communicate that behavior to later developers.
+Writing these type of tests increases your confidence that the existing methods you're using work the way you expect. Combined with using TDD practices
+while writing the new features, this reduces the risks associated with a change.
+
+== How to write Characterization Tests
+
+. Write a test that uses the legacy code
+. Write an assertion that you know will fail
+. Learn from the failure how the code actually behaves
+. Change the assertion to match the existing behavior
+
+== Characterization Test Demo
+
+PolicyVerificationStep Demo
+
+== What to do when you can't Test
+
+You have to add functionality, but there are no tests and you don't have time or the existing code is hard to test.
+
+* Sprout Method/Class
+* Wrapper Method/Class
+
+== Sprout example
+[source,java, linenums]
+.Existing Code
+public void pay() {
+    // Do stuff related to payment
+}
+
+[source,java, linenums, highlight='2']
+.Option 1
+public void pay() {
+    // Add auditing logic here
+    // Do stuff related to payment
+}
+
+[source,java, linenums, highlight='2']
+.Option 2
+public void pay() {
+    writeAuditTrail();
+    // Do stuff related to payment
+}
+
+== Wrap example
+[source,java, linenums]
+.Existing Code
+public void pay() {
+    // Do stuff related to payment
+}
+
+[source,java, linenums, highlight='2']
+.Wrap Legacy method
+public void pay() {
+    doLegacyPayment();
+}
+
+[source,java, linenums, highlight='2']
+.Option 1
+public void pay() {
+    writeAuditTrail();
+    doLegacyPayment();
+}
+
+[source,java, linenums, highlight='2']
+.Option 2
+public void payWithAuditing() {
+    writeAuditTrail();
+    pay();
+}
+
+== Cost of Testing
+
+Scenario:
+
+* You spend two hours writing tests for a change you're about to make in an existing system.
+* You spend fifteen minutes making the actual change.
+* Was that two hours wasted?
+
+
+== References
+
+* Working Effectively with Legacy Code - Michael Feathers - https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052[ISBN: 0131177052]
+* http://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html[The Cycle of TDD] (Rules of TDD) - Robert Martin
+* http://blog.cleancoder.com/uncle-bob/2013/05/27/TheTransformationPriorityPremise.html[Transformation Priority Premise] - Robert Martin
+* http://osherove.com/tdd-kata-1/[String Calculator Kata] - https://github.com/JeffQuandt/tdd-string-calculator[My Implementation]
+* https://github.com/garora/TDD-Katas[Other TDD Katas]
+* Testing First vs Later - http://people.brunel.ac.uk/~csstmms/FucciEtAl_ESEM2016.pdf[Study] - http://blog.cleancoder.com/uncle-bob/2016/11/10/TDD-Doesnt-work.html[Robert Martin's response]

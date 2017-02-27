@@ -1,0 +1,102 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5+'
+        classpath 'org.asciidoctor:asciidoctorj-pdf:1.5+'
+        classpath 'org.ysb33r.gradle:vfs-gradle-plugin:1+'
+        classpath 'commons-httpclient:commons-httpclient:3.+'
+    }
+}
+
+plugins {
+    id 'org.asciidoctor.convert' version '1.5.3'
+    id 'com.github.jruby-gradle.base' version '1.2.1'
+}
+
+group 'TechDesignAsciiDoctor'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+
+// asciidoctor plugins
+apply plugin: 'org.asciidoctor.convert'
+apply plugin: 'com.github.jruby-gradle.base'
+apply plugin: 'org.ysb33r.vfs'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    deckjsVersion = 'master'
+    asciidoctorBackendVersion = 'master'
+    downloadDir = new File(buildDir, 'download')
+    templateDir = new File(downloadDir, 'templates')
+    deckjsDir = new File(downloadDir, 'deck.js')
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile "commons-io:commons-io:2.4"
+    testCompile "org.codehaus.groovy:groovy-all:2.4.7"
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-3"
+    testCompile "cglib:cglib-nodep:3.2.4"
+    testRuntime "com.athaydes:spock-reports:1.2.13"
+}
+
+task download << {
+    mkdir downloadDir
+    vfs {
+        cp "zip:https://github.com/asciidoctor/asciidoctor-deck.js/archive/${asciidoctorBackendVersion}.zip!asciidoctor-deck.js-${asciidoctorBackendVersion}/templates",
+           templateDir, recursive: true, overwrite: true
+        cp "zip:https://github.com/imakewebthings/deck.js/archive/${deckjsVersion}.zip!deck.js-${deckjsVersion}",
+           deckjsDir, recursive: true, overwrite: true
+    }
+}
+
+// asciidoctor configuration blocks for generating documentation files
+asciidoctorj {
+    version = '1.5.4.1'
+}
+
+asciidoctor {
+    dependsOn jrubyPrepare, download
+
+    sources {
+        include 'tdd-overview.adoc'
+    }
+
+    resources {
+        from(sourceDir) {
+            include 'images/**'
+        }
+        from(downloadDir) {
+            include 'deck.js/**'
+        }
+    }
+    backends 'deckjs'
+    attributes   \
+          'build-gradle': file('build.gradle'),
+            'endpoint-url': 'http://example.org',
+            'source-highlighter': 'highlightjs',
+            'highlightjsdir': 'http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4',
+            'imagesdir': './images',
+            'asset-uri-scheme': 'http',
+            'toc': 'left',
+            'icons': 'font',
+            'setanchors': '',
+            'idprefix': '',
+            'idseparator': '-',
+            'docinfo1': 'shared'
+
+    options template_dirs: [new File(templateDir, 'haml').absolutePath]
+
+}

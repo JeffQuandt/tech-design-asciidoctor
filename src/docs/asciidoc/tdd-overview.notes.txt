@@ -1,0 +1,50 @@
+- Intro
+
+- Methodology
+	Easy to say, harder to do. 
+	Easier in greenfield dev
+	Hard when test coverage doesn't exist, legacy software
+	Fast means: Avoiding IO, database initialization/access, large dependency graphs
+	
+- Test First or Later
+	Uncle Bob is a bit of a zealot.
+	If you have tests covering all of your code and you run them before/after every change, it becomes trivial to determine what change broke the tests.
+	This speeds development time. If you've written 200 lines between test execution, it can require some debugging or analysis to determine the fault location.
+	inverted if condition. NPEs, etc.
+	
+- Kata demo
+
+- Legacy Changes
+	Change points: Places where changes are to be made
+	Test points: Determine 'what' to test, methods, classes, values
+	Dependencies: Often means mocking, but also consider Global/static methods, extracting methods into Implementor/delegate classes
+	Tests: At minimum, new functionality should have tests. Ideally, write tests for existing code first (Charaterizing tests)
+	Make changes: Red -> Green -> Refactor cycle
+	 
+- Methdos
+	When you can't/don't have time to test existing code. Not the ideal state, but minimize risk
+	
+- Efect Propagation
+	Michael Feathers calls it...
+	Help determine where impacts of changes may be felt. Ex. Adding a method that is not called has no effect. Modifying a method that returns a value can impact the callers as well as the callers' callers.
+	
+- Method Use
+	A special case of the Boy Scout Rule
+	If there are no tests, how do you know what a method does or how it works? 
+	
+- Characterizing tests
+	You're probably going to have to analyze the existing code before you can use/change it. Might as well document that learning while you're doing it.
+	Help 
+	Code from 6 mos. ago.
+	
+- When you can't test
+	Last resort. 
+	Ex. HealthOdsSessionFacade.process. 500+ line if statement. 
+	Sprout: Add a new method or class to handle new functionality. Call it from existing code. Test new functionality
+	Wrapper: Either wrap existing method/class in a new method/class of identical signature with added functionality, or wrap existing method with new method that adds optional functionality
+	
+- Cost of testing
+	Don't know how long it would have taken without testing. Maybe longer due to bugs. Even longer if bugs found in QA.
+	Often in same or nearby code soon
+	May not reap benefits for a long time
+	But, may identify unknown/unrelated bugs
