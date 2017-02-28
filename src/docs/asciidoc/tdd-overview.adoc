@@ -19,6 +19,9 @@ Test-driven development (TDD) is a software development process that relies on t
 [%step]
 But what does that mean in practise?
 
+[%step]
+Consider tests part of your deliverable. Value test code on par with feature code.
+
 == TDD Methodology
 
 Robert Martin describes the following three rules for TDD.
@@ -102,6 +105,7 @@ public void pay() {
     // Do stuff related to payment
 }
 
+[%step]
 [source,java, linenums, highlight='2']
 .Option 1
 public void pay() {
@@ -109,6 +113,7 @@ public void pay() {
     // Do stuff related to payment
 }
 
+[%step]
 [source,java, linenums, highlight='2']
 .Option 2
 public void pay() {
@@ -129,6 +134,7 @@ public void pay() {
     doLegacyPayment();
 }
 
+[%step]
 [source,java, linenums, highlight='2']
 .Option 1
 public void pay() {
@@ -136,6 +142,7 @@ public void pay() {
     doLegacyPayment();
 }
 
+[%step]
 [source,java, linenums, highlight='2']
 .Option 2
 public void payWithAuditing() {
