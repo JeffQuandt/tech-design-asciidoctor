@@ -34,13 +34,13 @@ repositories {
     mavenCentral()
 }
 
-ext {
-    deckjsVersion = 'master'
-    asciidoctorBackendVersion = 'master'
-    downloadDir = new File(buildDir, 'download')
-    templateDir = new File(downloadDir, 'templates')
-    deckjsDir = new File(downloadDir, 'deck.js')
-}
+//ext {
+//    deckjsVersion = 'master'
+//    asciidoctorBackendVersion = 'master'
+//    downloadDir = new File(buildDir, 'download')
+//    templateDir = new File(downloadDir, 'templates')
+//    deckjsDir = new File(downloadDir, 'deck.js')
+//}
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.11'
@@ -52,15 +52,35 @@ dependencies {
     testRuntime "com.athaydes:spock-reports:1.2.13"
 }
 
+ext {
+    revealjsVersion = '3.2.0'
+    asciidoctorBackendVersion = 'master'
+    downloadDir = new File(buildDir,'download')
+    templateDir = new File(downloadDir,'templates')
+    revealjsDir   = new File(downloadDir,'reveal.js')
+}
+
 task download << {
     mkdir downloadDir
     vfs {
-        cp "zip:https://github.com/asciidoctor/asciidoctor-deck.js/archive/${asciidoctorBackendVersion}.zip!asciidoctor-deck.js-${asciidoctorBackendVersion}/templates",
-           templateDir, recursive: true, overwrite: true
-        cp "zip:https://github.com/imakewebthings/deck.js/archive/${deckjsVersion}.zip!deck.js-${deckjsVersion}",
-           deckjsDir, recursive: true, overwrite: true
+        cp "zip:https://github.com/asciidoctor/asciidoctor-reveal.js/archive/${asciidoctorBackendVersion}.zip!asciidoctor-reveal.js-${asciidoctorBackendVersion}",
+           templateDir, recursive:true, overwrite:true
+        cp "zip:https://github.com/hakimel/reveal.js/archive/${revealjsVersion}.zip!reveal.js-${revealjsVersion}",
+           revealjsDir, recursive:true, overwrite:true
     }
 }
+
+
+
+//task download << {
+//    mkdir downloadDir
+//    vfs {
+//        cp "zip:https://github.com/asciidoctor/asciidoctor-deck.js/archive/${asciidoctorBackendVersion}.zip!asciidoctor-deck.js-${asciidoctorBackendVersion}/templates",
+//           templateDir, recursive: true, overwrite: true
+//        cp "zip:https://github.com/imakewebthings/deck.js/archive/${deckjsVersion}.zip!deck.js-${deckjsVersion}",
+//           deckjsDir, recursive: true, overwrite: true
+//    }
+//}
 
 // asciidoctor configuration blocks for generating documentation files
 asciidoctorj {
@@ -71,6 +91,7 @@ asciidoctor {
     dependsOn jrubyPrepare, download
 
     sources {
+        include 'ods-send-to-batch-queue-proposal.adoc'
         include 'tdd-overview.adoc'
     }
 
@@ -79,10 +100,10 @@ asciidoctor {
             include 'images/**'
         }
         from(downloadDir) {
-            include 'deck.js/**'
+            include 'reveal.js/**'
         }
     }
-    backends 'deckjs'
+    backends 'revealjs'
     attributes   \
           'build-gradle': file('build.gradle'),
             'endpoint-url': 'http://example.org',
@@ -95,8 +116,12 @@ asciidoctor {
             'setanchors': '',
             'idprefix': '',
             'idseparator': '-',
-            'docinfo1': 'shared'
+            'docinfo1': 'shared',
+            'revealjs_progress': 'false',
+            'revealjs_center': 'false',
+            'revealjs_controls': 'false'
 
-    options template_dirs: [new File(templateDir, 'haml').absolutePath]
+//    options template_dirs: [new File(templateDir, 'haml').absolutePath]
+    options template_dirs: [new File(templateDir,'templates/slim').absolutePath]
 
 }

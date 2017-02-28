@@ -8,31 +8,43 @@ Jeff Quandt<jeff.quandt@mutualofomaha.com>
 :source-highlighter: highlightjs
 :source-language: java
 :navigation:
+:revealjs_theme: moon
 :menu:
 :goto:
+
+== !
+
+* Intro to TDD
+** Methodology
+** Why practice TDD?
+** Kata Demo
+* How TDD applies to Legacy code
+ ** Identifying what to test
+ ** Tests as documentation
+ ** Legacy TDD demo
+* Strategies For when there are no tests
+* Costs of testing
 
 == Introduction: What is TDD?
 
 [quote, Wikipedia, Test Driven Development]
 Test-driven development (TDD) is a software development process that relies on the repetition of a very short development cycle: requirements are turned into very specific test cases, then the software is improved to pass the new tests, only.
 
-[%step]
-But what does that mean in practise?
+[.step]
+* But what does that mean in practise?
 
-[%step]
-Consider tests part of your deliverable. Value test code on par with feature code.
+* Consider tests part of your deliverable. Value test code on par with feature code.
 
 == TDD Methodology
 
 Robert Martin describes the following three rules for TDD.
-
+[.step]
 . You must write a failing test before you write any production code.
 . You must not write more of a test than is sufficient to fail, or fail to compile.
 . You must not write more production code than is sufficient to make the currently failing test pass.
-
-Also called the Red -> Green -> Refactor cycle.
-
-Test suites must be fast and run often.
+[.step]
+* Also called the Red -> Green -> Refactor cycle.
+* Test suites must be fast and run often.
 
 == Test First or Test Later?
 
@@ -40,9 +52,27 @@ In practice, it doesn't matter if the test is written first or later. The import
 
 Running the tests frequently and close to when you make changes, helps you identify bugs/mistakes sooner.
 
-== TDD Kata
+== Why bother?
 
-String Calculator Demo
+[.step]
+* Helps you "discover" solutions
+* Fewer bug fixing cycles
+* Long term confidence in code
+* Provides a "safety net" for future changes
+* Leads to functional/E2E tests
+* Easily accessible documentation
+* Strategic goal for 2017!
+
+
+== String Calculator Kata
+
+. Create a simple String calculator with a method int Add(string numbers)
+
+ ** The method can take 0, 1 or 2 numbers, and will return their sum (for an empty string it will return 0) for example “” or “1” or “1,2”
+
+. Allow the Add method to handle an unknown amount of numbers
+
+. Allow the Add method to handle new lines between numbers (instead of commas).
 
 == Legacy Change Algorithm
 
@@ -52,26 +82,19 @@ String Calculator Demo
 . Write tests
 . Make changes and refactor
 
-== Seams
-
-
-== Strategy for Analyzing
+== Strategy for Analyzing Existing Code
 
 Effect Propagation Method
 
 . Identify a method that will change
 . Examine return values and where they are used
 . Examine changes in class fields
-.. Investigate super- and subclasses
+    ** Investigate super- and subclasses
 . Examine side effects on method parameters
-.. Investigate where method parameters may be accessed by callers
+    ** Investigate where method parameters may be accessed by callers
 . Examine modifications in static/global data
 
 == More than finding bugs!
-
-[quote, Michael Feathers, Working Effectively with Legacy Code]
-."Method Use" Rule
-Before you use a method, check to see if there are tests. If there aren't, write them.
 
 Tests aren't just to find bugs. Tests also document how code behaves. When working in a legacy environment without test cases, an effective method
 for analyzing code is to write characterization tests. This type of test is meant to find out what the existing code does, so that you can use or modify it.
@@ -79,6 +102,12 @@ for analyzing code is to write characterization tests. This type of test is mean
 Over time, this increases overall test coverage, helps you understand what the method you're calling does, and communicate that behavior to later developers.
 Writing these type of tests increases your confidence that the existing methods you're using work the way you expect. Combined with using TDD practices
 while writing the new features, this reduces the risks associated with a change.
+
+== Method Use Rule
+
+[quote, Michael Feathers, Working Effectively with Legacy Code]
+."Method Use" Rule
+Before you use a method, check to see if there are tests. If there aren't, write them.
 
 == How to write Characterization Tests
 
@@ -98,57 +127,65 @@ You have to add functionality, but there are no tests and you don't have time or
 * Sprout Method/Class
 * Wrapper Method/Class
 
-== Sprout example
-[source,java, linenums]
+== Sprout Method
+[.step]
+[source,java]
 .Existing Code
 public void pay() {
     // Do stuff related to payment
 }
 
 [%step]
-[source,java, linenums, highlight='2']
-.Option 1
+--
+[source,java]
+.Add it inline? No way!
 public void pay() {
     // Add auditing logic here
     // Do stuff related to payment
 }
 
+--
 [%step]
-[source,java, linenums, highlight='2']
-.Option 2
+--
+[source,java]
+.Sprout a method or Class
 public void pay() {
     writeAuditTrail();
     // Do stuff related to payment
 }
 
-== Wrap example
-[source,java, linenums]
-.Existing Code
-public void pay() {
-    // Do stuff related to payment
-}
+--
+[%step]
 
-[source,java, linenums, highlight='2']
+== Wrap example
+[.step]
+[source,java]
 .Wrap Legacy method
 public void pay() {
     doLegacyPayment();
 }
 
-[%step]
-[source,java, linenums, highlight='2']
-.Option 1
+[.step]
+--
+[source,java]
+.Add new features in the wrapper method
 public void pay() {
     writeAuditTrail();
     doLegacyPayment();
 }
 
-[%step]
-[source,java, linenums, highlight='2']
-.Option 2
+--
+[.step]
+--
+[source,java]
+.Or wrap existing method in some cases
 public void payWithAuditing() {
     writeAuditTrail();
     pay();
 }
+
+--
+[.step]
 
 == Cost of Testing
 
@@ -158,8 +195,17 @@ Scenario:
 * You spend fifteen minutes making the actual change.
 * Was that two hours wasted?
 
+== Summary
 
-== References
+* What, how, and why of TDD
+* TDD and Legacy code
+* Making the best of a bad situation
+
+== Challenge
+
+What is in the way of you (as a team or individual) putting TDD into practice?
+
+== Want more info?
 
 * Working Effectively with Legacy Code - Michael Feathers - https://www.amazon.com/Working-Effectively-Legacy-Michael-Feathers/dp/0131177052[ISBN: 0131177052]
 * http://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html[The Cycle of TDD] (Rules of TDD) - Robert Martin
@@ -167,3 +213,6 @@ Scenario:
 * http://osherove.com/tdd-kata-1/[String Calculator Kata] - https://github.com/JeffQuandt/tdd-string-calculator[My Implementation]
 * https://github.com/garora/TDD-Katas[Other TDD Katas]
 * Testing First vs Later - http://people.brunel.ac.uk/~csstmms/FucciEtAl_ESEM2016.pdf[Study] - http://blog.cleancoder.com/uncle-bob/2016/11/10/TDD-Doesnt-work.html[Robert Martin's response]
+* http://spockframework.org/spock/docs/1.1-rc-3/index.html[Spock Documentation]
+* Ask a https://confluence.mutualofomaha.com/confluence/questions[question] on MoO Confluence!
+
