@@ -30,3 +30,4 @@ build/
 out
 gen
 !/gradle/wrapper/gradle-wrapper.jar
+!tdd-overview.zip

@@ -27,7 +27,7 @@
 	Tests: At minimum, new functionality should have tests. Ideally, write tests for existing code first (Charaterizing tests)
 	Make changes: Red -> Green -> Refactor cycle
 
-- Efect Propagation
+- Effect Propagation
 	Michael Feathers calls it...
 	Help determine where impacts of changes may be felt. Ex. Adding a method that is not called has no effect. Modifying a method that returns a value can impact the callers as well as the callers' callers.
 
